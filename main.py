@@ -1,5 +1,6 @@
 import random
 
+
 def is_prime(n):
     if n <= 1:
         return False
@@ -39,44 +40,43 @@ def multiplicative_inverse(e, phi):
         y1, y2 = y2 - q * y1, y1
     return x2
 
-
+#Генерирую открытый и закрытый ключи
 def generate_keypair():
     p = generate_large_prime()
     q = generate_large_prime()
     n = p * q
-    phi = (p - 1) * (q - 1)
+    phi = (p - 1) * (q - 1)  # Функция эйлера
 
-    e = random.randrange(1, phi)
+    e = random.randrange(1, phi) # число Е
     g = gcd(e, phi)
     while g != 1:
         e = random.randrange(1, phi)
         g = gcd(e, phi)
 
-    d = multiplicative_inverse(e, phi)
+    d = multiplicative_inverse(e, phi) # число закрытой экспоненты, с помощью открытой
 
     return ((e, n), (d, n))
 
-
+# Шифрует - преобразуя каждый символ сообщения в его числовое представление, затем применяет операцию возведения в степень по модулю n.
 def encrypt(public_key, plaintext):
     e, n = public_key
     cipher = [pow(ord(char), e, n) for char in plaintext]
     return cipher
 
-
+# возведения в степень по модулю n, затем преобразует полученные числа обратно в символы.
 def decrypt(private_key, ciphertext):
     d, n = private_key
     plain = [chr(pow(char, d, n)) for char in ciphertext]
     return ''.join(plain)
 
 
-# Пример использования
 public_key, private_key = generate_keypair()
-message = "Hello, RSA!"
+message = "RSA"
 encrypted_message = encrypt(public_key, message)
 decrypted_message = decrypt(private_key, encrypted_message)
 
-print('Public Key:', public_key)
-print('Private Key:', private_key)
-print('Original Message:', message)
-print('Encrypted Message:', encrypted_message)
-print('Decrypted Message:', decrypted_message)
+print('Открытый ключ:', public_key)
+print('Закрытый ключ:', private_key)
+print('Сообщение:', message)
+print('Зашифрованное:', encrypted_message)
+print('Расшифрованное:', decrypted_message)
